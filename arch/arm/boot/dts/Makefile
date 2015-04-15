@@ -220,6 +220,7 @@ dtb-$(CONFIG_ARCH_MXC) += \
 	imx6dl-tx6u-811x.dtb \
 	imx6dl-wandboard.dtb \
 	imx6dl-wandboard-revb1.dtb \
+	imx6dl-yetu.dtb \
 	imx6q-arm2.dtb \
 	imx6q-cm-fx6.dtb \
 	imx6q-cubox-i.dtb \
@@ -248,6 +249,7 @@ dtb-$(CONFIG_ARCH_MXC) += \
 	imx6q-tx6q-1020.dtb \
 	imx6q-tx6q-1020-comtft.dtb \
 	imx6q-tx6q-1110.dtb \
+	imx6q-yetu.dtb \
 	imx6sl-evk.dtb \
 	imx6sx-sdb.dtb \
 	vf610-colibri-eval-v3.dtb \
