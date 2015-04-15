@@ -1217,8 +1217,12 @@ static long do_fb_ioctl(struct fb_info *info, unsigned int cmd,
 		fb = info->fbops;
 		if (fb->fb_ioctl)
 			ret = fb->fb_ioctl(info, cmd, arg);
-		else
-			ret = -ENOTTY;
+		else {
+			pr_err("%s %d YETU fb_ioctl@%p \n", __func__, __LINE__, info->fbops->fb_ioctl);
+
+			ret = 0; /* for now, just ignore this case */
+		/*	ret = -ENOTTY; */
+		}
 		unlock_fb_info(info);
 	}
 	return ret;

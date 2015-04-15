@@ -651,6 +651,7 @@ endif
 # to let the build fail with bad compiler flags so that we can't produce a
 # kernel when there is a CONFIG and compiler mismatch.
 #
+ifdef YETU
 ifdef CONFIG_CC_STACKPROTECTOR_REGULAR
   stackp-flag := -fstack-protector
   ifeq ($(call cc-option, $(stackp-flag)),)
@@ -667,6 +668,7 @@ ifdef CONFIG_CC_STACKPROTECTOR_STRONG
 else
   # Force off for distro compilers that enable stack protector by default.
   stackp-flag := $(call cc-option, -fno-stack-protector)
+endif
 endif
 endif
 KBUILD_CFLAGS += $(stackp-flag)
