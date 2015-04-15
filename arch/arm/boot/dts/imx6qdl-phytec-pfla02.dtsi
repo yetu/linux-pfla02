@@ -19,6 +19,10 @@
 		reg = <0x10000000 0x80000000>;
 	};
 
+	aliases {
+		i2c3 = &hdmi_ddc;
+	};
+
 	regulators {
 		compatible = "simple-bus";
 		#address-cells = <1>;
@@ -30,7 +34,10 @@
 			regulator-name = "usb_otg_vbus";
 			regulator-min-microvolt = <5000000>;
 			regulator-max-microvolt = <5000000>;
-			gpio = <&gpio4 15 0>;
+			/* WORKADDOUND: Remove the vbus enable GPIO *
+			 * The OTG ID pin has only 1V if otg is in device mode*/
+			/* gpio = <&gpio4 15 0>; */
+			enable-active-high;
 		};
 
 		reg_usb_h1_vbus: regulator@1 {
@@ -40,6 +47,7 @@
 			regulator-min-microvolt = <5000000>;
 			regulator-max-microvolt = <5000000>;
 			gpio = <&gpio1 0 0>;
+			enable-active-high;
 		};
 	};
 
@@ -55,6 +63,19 @@
 			label = "phyflex:red";
 			gpios = <&gpio2 31 0>;
 		};
+	};
+
+	hdmi_ddc: i2c-gpio-0 {
+		compatible = "i2c-gpio";
+		gpios = <&gpio4 13 0 /* sda */
+			 &gpio4 12 0 /* scl */
+			>;
+		i2c-gpio,delay-us = <2>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_i2c_gpio>;
+		status = "okay";
 	};
 };
 
@@ -167,6 +188,20 @@
 	pinctrl-0 = <&pinctrl_hog>;
 
 	imx6q-phytec-pfla02 {
+		pinctrl_hdmicec: hdmicecgrp {
+			fsl,pins = <
+				MX6QDL_PAD_EIM_A25__HDMI_TX_CEC_LINE 0x1f8b0
+			>;
+		};
+
+
+		pinctrl_i2c_gpio: pinctrli2cgpiogrp {
+			fsl,pins = <
+				MX6QDL_PAD_KEY_ROW3__GPIO4_IO13 0x80000000
+				MX6QDL_PAD_KEY_COL3__GPIO4_IO12 0x80000000
+			>;
+		};
+
 		pinctrl_hog: hoggrp {
 			fsl,pins = <
 				MX6QDL_PAD_EIM_D23__GPIO3_IO23 0x80000000
@@ -174,6 +209,8 @@
 				MX6QDL_PAD_DI0_PIN15__GPIO4_IO17  0x80000000 /* PMIC interrupt */
 				MX6QDL_PAD_ENET_TXD0__GPIO1_IO30 0x80000000 /* Green LED */
 				MX6QDL_PAD_EIM_EB3__GPIO2_IO31 0x80000000 /* Red LED */
+				MX6QDL_PAD_EIM_CS1__GPIO2_IO24 0x80000000 /* user led */
+                                MX6QDL_PAD_GPIO_18__GPIO7_IO13 0X80000000 /* LEDS RGB */
 			>;
 		};
 
@@ -253,7 +290,8 @@
 
 		pinctrl_usbh1: usbh1grp {
 			fsl,pins = <
-				MX6QDL_PAD_GPIO_0__USB_H1_PWR		0x80000000
+				MX6QDL_PAD_GPIO_0__GPIO1_IO00		0x80000000
+				MX6QDL_PAD_GPIO_3__USB_H1_OC		0x1b0b0	
 			>;
 		};
 
