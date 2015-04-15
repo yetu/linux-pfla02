@@ -1,0 +1,150 @@
+/*
+ * Copyright 2013 Christian Hemp, Phytec Messtechnik GmbH
+ *
+ * The code contained herein is licensed under the GNU General Public
+ * License. You may obtain a copy of the GNU General Public License
+ * Version 2 or later at the following locations:
+ *
+ * http://www.opensource.org/licenses/gpl-license.html
+ * http://www.gnu.org/copyleft/gpl.html
+ */
+
+/dts-v1/;
+#include "imx6dl-phytec-pfla02.dtsi"
+#include "imx6qdl-phytec-pbab01.dtsi"
+
+/ {
+	model = "Yetu Gateway DualCore";
+	compatible = "phytec,imx6dl-pbab01", "phytec,imx6dl-pfla02", "fsl,imx6dl";
+        chosen {
+	              bootargs = "root=/dev/mmcblk0p3 rw rootwait cros_debug loglevel=7 video=HDMI-A-1:1280x720 mem=1024M,0x10000000";
+        };
+	ir: ir-receiver {
+		compatible = "gpio-ir-receiver";
+		gpios = <&gpio7 1 1>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_gpio_ir>;
+		/* linux,rc-map-name = "rc-rc6-mce"; */
+	};
+
+	soc {
+		gpu: gpu@00130000 {
+			compatible = "fsl,imx6q-gpu";
+			reg = <0x00130000 0x4000>, <0x00134000 0x4000>,
+			      <0x02204000 0x4000>, <0x0 0x0>;
+			reg-names = "iobase_3d", "iobase_2d",
+				    "iobase_vg", "phys_baseaddr";
+			interrupts = <0 9 0x04>, <0 10 0x04>,<0 11 0x04>;
+			interrupt-names = "irq_3d", "irq_2d", "irq_vg";
+			clocks = <&clks 26>, <&clks 143>,
+				 <&clks 27>, <&clks 121>,
+				 <&clks 122>, <&clks 74>;
+			clock-names = "gpu2d_axi_clk", "openvg_axi_clk",
+				      "gpu3d_axi_clk", "gpu2d_clk",
+				      "gpu3d_clk", "gpu3d_shader_clk";
+			resets = <&src 0>, <&src 3>, <&src 3>;
+			reset-names = "gpu3d", "gpu2d", "gpuvg";
+			pu-supply = <&reg_pu>;
+			status = "okay";
+		};
+                aips-bus@02000000 { /* AIPS1 */
+                vpu: vpu@02040000 {
+		     compatible = "fsl,imx6-vpu";
+		     reg = <0x02040000 0x3c000>;
+		     reg-names = "vpu_regs";
+		     interrupts = <0 3 0x01>, <0 12 0x04>;
+		     interrupt-names = "vpu_jpu_irq", "vpu_ipi_irq";
+		     clocks = <&clks 168>, <&clks 140>, <&clks 142>;
+		     clock-names = "vpu_clk", "mmdc_ch0_axi", "ocram";
+			/*
+			iramsize = <0x0>; iramsize = <0x21000>;
+			iram = <&ocram>;
+			 */
+		      resets = <&src 1>;
+			 pu-supply = <&reg_pu>;
+			 status = "okay"; };
+		};
+		};
+		v4l2_out {
+			 compatible = "fsl,mxc_v4l2_output";
+			 status = "okay";
+		};
+		hdmi_cec {
+			 pinctrl_hdmi_cec_1: hdmicecgrp-1 {
+			     fsl,pins = <
+				MX6QDL_PAD_EIM_A25__HDMI_TX_CEC_LINE 0x1f8b0
+			>;
+		};
+
+		pinctrl_hdmi_cec_2: hdmicecgrp-2 {
+			fsl,pins = <
+				MX6QDL_PAD_KEY_ROW2__HDMI_TX_CEC_LINE 0x1f8b0
+			>;
+		};
+	};
+};
+
+&iomuxc {
+		pinctrl_uart1: uart1grp {
+                        fsl,pins = <
+                                MX6QDL_PAD_SD3_DAT7__UART1_TX_DATA      0x1b0b1
+                                MX6QDL_PAD_SD3_DAT6__UART1_RX_DATA      0x1b0b1
+                        >;
+                };
+
+		pinctrl_gpio_ir: gpio_ir {
+			fsl,pins = <
+				MX6QDL_PAD_SD3_DAT4__GPIO7_IO01		0x80000000
+			>;
+		};
+		
+};
+
+&uart1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_uart1>;
+	status = "okay";
+};
+
+&i2c2 {
+
+        tpm@20 {
+                compatible = "infineon,slb9645tt";
+                reg = <0x20>;
+        };
+	
+	leds@60 {
+		compatible = "nxp,leds-pca953x";
+		/* led-controller; */
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x60>;
+		/* gpio = <&gpio7 13 0>; */
+	
+		channel1red@7 {
+			label = "channel1-red";
+			reg = <7>;
+		};
+		channel1green@6 {
+			label = "channel1-green";
+			reg = <6>;
+		};
+		channel1blue@5 {
+			label = "channel1-blue";
+			reg = <5>;
+		};
+
+		channel2red@3 {
+			label = "channel2-red";
+			reg = <3>;
+		};
+		channel2green@2 {
+			label = "channel2-green";
+			reg = <2>;
+		};
+		channel2blue@1 {
+			label = "channel2-blue";
+			reg = <1>;
+		};
+	}; 
+};
