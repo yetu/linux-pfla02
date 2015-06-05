@@ -86,6 +86,176 @@ static const struct pca9532_chip_info pca9532_chip_info_tbl[] = {
 	},
 };
 
+#if IS_ENABLED(CONFIG_OF)
+
+#if 0
+
+static struct pca9532_platform_data user_leds_data = {
+	.leds = {
+			{
+				.name = "user_led_0",
+				.state = PCA9532_OFF,
+				.type = PCA9532_TYPE_LED,
+			}, {
+				.name = "user_led_1",
+				.state = PCA9532_ON,
+				.type = PCA9532_TYPE_LED,
+			}, {
+				.name = "user_led_2",
+				.state = PCA9532_ON,
+				.type = PCA9532_TYPE_LED,
+			}, {
+				.name = "user_led_3",
+				.state = PCA9532_ON,
+				.type = PCA9532_TYPE_LED,
+			}, {
+				.name = "user_led_4",
+				.state = PCA9532_OFF,
+				.type = PCA9532_TYPE_LED,
+			}, {
+				.name = "user_led_5",
+				.state = PCA9532_ON,
+				.type = PCA9532_TYPE_LED,
+			}, {
+				.name = "user_led_6",
+				.state = PCA9532_ON,
+				.type = PCA9532_TYPE_LED,
+			}, {
+				.name = "user_led_7",
+				.state = PCA9532_ON,
+				.type = PCA9532_TYPE_LED,
+
+			},
+		},
+	.psc = { 0, 0 },
+	.pwm = { 0, 0 },
+};
+
+static struct i2c_board_info mxc_i2c1_board_info[] __initdata = {
+	{
+		I2C_BOARD_INFO("max1037", 0x64),
+	}, {
+		I2C_BOARD_INFO("tlv320aic3007", 0x18),
+	}, {
+		I2C_BOARD_INFO("rtc8564", 0x51),
+	}, {
+		I2C_BOARD_INFO("pca9533", 0x60),
+		.platform_data = &user_leds_data,
+	}, {
+		I2C_BOARD_INFO("stmpe811", 0x41),
+		.irq = gpio_to_irq(MX6_PHYFLEX_CAP_TCH_INT0),
+		.platform_data = (void *)&stmpe811_data0,
+	}, {
+		I2C_BOARD_INFO("edt-ft5x06", 0x38),
+		.irq = gpio_to_irq(MX6_PHYFLEX_KAPA_TOUCH_INT0),
+		.platform_data = (void *)&mx6_phyflex_ft5x06_data,
+	},
+};
+
+i2c_register_board_info(1, mxc_i2c1_board_info, ARRAY_SIZE(mxc_i2c1_board_info));
+#endif
+static struct pca9532_platform_data *
+pca9532_dt_init(struct i2c_client *client)
+{
+#if 0
+	struct device_node *np = client->dev.of_node, *child;
+	struct pca9532_platform_data *pdata;
+	struct led_info *pca9532_leds;
+	int count;
+
+	count = of_get_child_count(np);
+	if (!count || count > chip->n_leds)
+		return ERR_PTR(-ENODEV);
+
+	pca963x_leds = devm_kzalloc(&client->dev,
+			sizeof(struct led_info) * chip->n_leds, GFP_KERNEL);
+	if (!pca953x_leds)
+		return ERR_PTR(-ENOMEM);
+
+	for_each_child_of_node(np, child) {
+		struct led_info led;
+		u32 reg;
+		int res;
+
+		res = of_property_read_u32(child, "reg", &reg);
+		if ((res != 0) || (reg >= chip->n_leds))
+			continue;
+		led.name =
+			of_get_property(child, "label", NULL) ? : child->name;
+		led.default_trigger =
+			of_get_property(child, "linux,default-trigger", NULL);
+		pca953x_leds[reg] = led;
+	}
+	pdata = devm_kzalloc(&client->dev,
+			     sizeof(struct pca9532_platform_data), GFP_KERNEL);
+	if (!pdata)
+		return ERR_PTR(-ENOMEM);
+
+	pdata->leds.leds = leds;
+	pdata->leds.num_leds = chip->n_leds;
+#else
+
+static struct pca9532_platform_data user_leds_data = {
+	.leds = {
+			{
+				.name = "user_led_0",
+				.state = PCA9532_OFF,
+				.type = PCA9532_TYPE_LED,
+			}, {
+				.name = "user_led_1",
+				.state = PCA9532_ON,
+				.type = PCA9532_TYPE_LED,
+			}, {
+				.name = "user_led_2",
+				.state = PCA9532_ON,
+				.type = PCA9532_TYPE_LED,
+			}, {
+				.name = "user_led_3",
+				.state = PCA9532_ON,
+				.type = PCA9532_TYPE_LED,
+			}, {
+				.name = "user_led_4",
+				.state = PCA9532_OFF,
+				.type = PCA9532_TYPE_LED,
+			}, {
+				.name = "user_led_5",
+				.state = PCA9532_ON,
+				.type = PCA9532_TYPE_LED,
+			}, {
+				.name = "user_led_6",
+				.state = PCA9532_ON,
+				.type = PCA9532_TYPE_LED,
+			}, {
+				.name = "user_led_7",
+				.state = PCA9532_ON,
+				.type = PCA9532_TYPE_LED,
+
+			},
+		},
+	.psc = { 0, 0 },
+	.pwm = { 0, 0 },
+};
+
+static struct i2c_board_info mxc_i2c1_board_info[] __initdata = {
+	{
+		I2C_BOARD_INFO("pca9533", 0x60),
+		.platform_data = &user_leds_data,
+	},
+};
+
+        i2c_register_board_info(1, mxc_i2c1_board_info, ARRAY_SIZE(mxc_i2c1_board_info));
+
+	return &user_leds_data;
+#endif
+}
+
+static const struct of_device_id of_pca953x_match[] = {
+	{ .compatible = "nxp,pca953x", },
+	{},
+};
+#endif
+
+#ifndef YETU
 static struct i2c_driver pca9532_driver = {
 	.driver = {
 		.name = "leds-pca953x",
@@ -94,7 +264,17 @@ static struct i2c_driver pca9532_driver = {
 	.remove = pca9532_remove,
 	.id_table = pca9532_id,
 };
-
+#else
+static struct i2c_driver pca9532_driver = {
+	.probe = pca9532_probe,
+	.remove = pca9532_remove,
+	.driver = {
+		.name = "leds-pca953x",
+                .owner = THIS_MODULE,
+                of_match_table = of_match_ptr(pca9532_i2c_of_match),
+	},
+};
+#endif
 /* We have two pwm/blinkers, but 16 possible leds to drive. Additionally,
  * the clever Thecus people are using one pwm to drive the beeper. So,
  * as a compromise we average one pwm to the values requested by all
@@ -348,6 +528,7 @@ static int pca9532_configure(struct i2c_client *client,
 		led->client = client;
 		led->id = i;
 		led->type = pled->type;
+		dev_err(&client->dev, "led->type %d\n", led->type);
 		switch (led->type) {
 		case PCA9532_TYPE_NONE:
 			break;
@@ -369,6 +550,10 @@ static int pca9532_configure(struct i2c_client *client,
 					led->name);
 				goto exit;
 			}
+			dev_err(&client->dev,
+				"Registered LED %s\n",
+				led->name);
+
 			pca9532_setled(led);
 			break;
 		case PCA9532_TYPE_N2100_BEEP:
@@ -443,8 +628,16 @@ static int pca9532_probe(struct i2c_client *client,
 	struct pca9532_platform_data *pca9532_pdata =
 			dev_get_platdata(&client->dev);
 
-	if (!pca9532_pdata)
-		return -EIO;
+	if (!pca9532_pdata) {
+		pca9532_pdata = pca9532_dt_init(client);
+		if (IS_ERR(pca9532_pdata)) {
+			dev_warn(&client->dev, "could not parse configuration\n");
+			pca9532_pdata = NULL;
+		}
+	}
+
+	if (!pca9532_pdata) 
+		  return -EIO;
 
 	if (!i2c_check_functionality(client->adapter,
 		I2C_FUNC_SMBUS_BYTE_DATA))
@@ -460,6 +653,7 @@ static int pca9532_probe(struct i2c_client *client,
 	i2c_set_clientdata(client, data);
 	data->client = client;
 	mutex_init(&data->update_lock);
+	pr_err("%s setting platform data\n", __func__);
 
 	return pca9532_configure(client, data, pca9532_pdata);
 }

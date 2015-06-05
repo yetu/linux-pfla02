@@ -266,7 +266,7 @@ EXTRA_CFLAGS += -I$(AQROOT)/hal/kernel/archvg
 endif
 
 
-# obj-$(CONFIG_MXC_GPU_VIV) += galcore.o
+#obj-$(CONFIG_MXC_GPU_VIV) += galcore.o
 obj-y += galcore.o
 galcore-objs  := $(OBJS)
 

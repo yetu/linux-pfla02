@@ -699,10 +699,11 @@ static int tpm_tis_i2c_probe(struct i2c_client *client,
 		dev_err(dev, "no algorithms associated to the i2c bus\n");
 		return -ENODEV;
 	}
-
+	dev_err(dev, "YETU tpm i2c bus\n");
 	tpm_dev.client = client;
 	rc = tpm_tis_i2c_init(&client->dev);
 	if (rc != 0) {
+	  dev_err(dev, "YETU tpm i2c bus no client found\n");
 		tpm_dev.client = NULL;
 		rc = -ENODEV;
 	}

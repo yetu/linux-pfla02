@@ -1016,19 +1016,17 @@ static int drm_fb_helper_single_fb_probe(struct drm_fb_helper *fb_helper,
 			crtc_count++;
 		}
 	}
-
+#ifndef YETU
+	DRM_INFO("Going 720p\n");
+	sizes.fb_width = sizes.surface_width = 1280;
+	sizes.fb_height = sizes.surface_height = 720;
+#endif
 	if (crtc_count == 0 || sizes.fb_width == -1 || sizes.fb_height == -1) {
 		/* hmm everyone went away - assume VGA cable just fell out
 		   and will come back later. */
-#ifndef YETU
-		DRM_INFO("Cannot find any crtc or sizes - going 720p\n");
-		sizes.fb_width = sizes.surface_width = 1280;
-		sizes.fb_height = sizes.surface_height = 720;
-#else
 		DRM_INFO("Cannot find any crtc or sizes - going 1024x768\n");
 		sizes.fb_width = sizes.surface_width = 1024;
 		sizes.fb_height = sizes.surface_height = 768;
-#endif
 	}
 
 	/* push down into drivers */

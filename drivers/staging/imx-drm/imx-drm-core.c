@@ -264,11 +264,12 @@ static int imx_drm_driver_load(struct drm_device *drm, unsigned long flags)
 	 * at drm_mode_addfb().
 	 */
 	drm->mode_config.min_width = 64;
-	drm->mode_config.min_height = 36;
 #ifdef YETU
+	drm->mode_config.min_height = 64;
 	drm->mode_config.max_width = 4096;
 	drm->mode_config.max_height = 4096;
 #else
+	drm->mode_config.min_height = 36;
 	drm->mode_config.max_width = 1280;
 	drm->mode_config.max_height = 720;
 #endif

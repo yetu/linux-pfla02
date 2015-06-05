@@ -1408,7 +1408,7 @@ static int imx_hdmi_connector_get_modes(struct drm_connector *connector)
 
 	edid = drm_get_edid(connector, hdmi->ddc);
 	if (edid) {
-		dev_dbg(hdmi->dev, "got edid: width[%d] x height[%d]\n",
+		dev_err(hdmi->dev, "got edid: width[%d] x height[%d]\n",
 			edid->width_cm, edid->height_cm);
 
 		drm_mode_connector_update_edid_property(connector, edid);
@@ -1417,7 +1417,7 @@ static int imx_hdmi_connector_get_modes(struct drm_connector *connector)
 		drm_edid_to_eld(connector, edid);
 		kfree(edid);
 	} else {
-		dev_dbg(hdmi->dev, "failed to get edid\n");
+		dev_err(hdmi->dev, "failed to get edid\n");
 	}
 
 	return 0;
