@@ -166,5 +166,5 @@ obj-y				+= mxc/gpu-viv/
 
 obj-y				+= mxc/vpu/
 obj-y				+= mxc/ipu3/
-obj-y				+= mxc/cryptodev/
+#obj-y				+= mxc/cryptodev/
 #obj-y				+= mxc/hdmi-cec/
